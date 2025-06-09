@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 from datetime import datetime, timedelta
 import subprocess
@@ -68,7 +68,7 @@ def create_livestream(youtube):
 def stream_looped_video(video_path, rtmp_url):
     command = [
         "ffmpeg",
-        "-stream_loop", "-1",        # Lặp vô hạn
+        "-stream_loop", "-1",
         "-re", "-i", video_path,
         "-c:v", "libx264",
         "-preset", "veryfast",
@@ -84,10 +84,15 @@ def stream_looped_video(video_path, rtmp_url):
     ]
     subprocess.Popen(command)
 
+# ================== Route giao diện web ==================
+@app.route('/upload', methods=['GET'])
+def upload_page():
+    return render_template("index.html")
+
 # ================== Route kiểm tra ==================
 @app.route('/')
 def home():
-    return "✅ A1Host đang hoạt động. Gửi video đến /upload-and-stream để livestream."
+    return "✅ A1Host đang hoạt động. Truy cập /upload để gửi video livestream."
 
 # ================== API Upload & Stream ==================
 @app.route('/upload-and-stream', methods=['POST'])
@@ -107,7 +112,7 @@ def upload_and_stream():
     rtmp_url = create_livestream(youtube)
     stream_looped_video(filepath, rtmp_url)
 
-    return jsonify({'message': 'Đã bắt đầu phát livestream 24/7', 'video': filename}), 200
+    return jsonify({'message': '✅ Đã bắt đầu phát livestream 24/7', 'video': filename}), 200
 
 # ================== Khởi chạy ==================
 if __name__ == '__main__':
