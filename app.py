@@ -84,6 +84,11 @@ def stream_looped_video(video_path, rtmp_url):
     ]
     subprocess.Popen(command)
 
+# ================== Route kiểm tra ==================
+@app.route('/')
+def home():
+    return "✅ A1Host đang hoạt động. Gửi video đến /upload-and-stream để livestream."
+
 # ================== API Upload & Stream ==================
 @app.route('/upload-and-stream', methods=['POST'])
 def upload_and_stream():
@@ -106,4 +111,4 @@ def upload_and_stream():
 
 # ================== Khởi chạy ==================
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)
